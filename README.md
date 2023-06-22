@@ -10,3 +10,4 @@ MicroPython sprinkler timer with JavaScript/Web Components front-end
 - Momentary switches
 - LEDs
 - A resistor or two
+- Wires :)
