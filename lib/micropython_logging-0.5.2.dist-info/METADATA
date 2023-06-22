@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: micropython-logging
+Version: 0.5.2
+Summary: logging module for MicroPython
+Home-page: https://github.com/pfalcon/micropython-lib
+Author: Stefan Lehmann
+Author-email: micropython-lib@googlegroups.com
+License: MIT
+Requires-Dist: micropython-os
+

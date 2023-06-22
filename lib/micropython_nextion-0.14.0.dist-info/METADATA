@@ -1,0 +1,10 @@
+Metadata-Version: 2.1
+Name: micropython-nextion
+Version: 0.14.0
+Summary: MicroPython Nextion serial displays library
+Home-page: https://github.com/brainelectronics/micropython-nextion
+Author: brainelectronics
+Author-email: info@brainelectronics.de
+License: MIT
+Requires-Dist: micropython-ulogging
+
