@@ -4,10 +4,11 @@ from time import sleep
 p1 = Pin(16, mode=Pin.OUT, value=1)
 p2 = Pin(17, mode=Pin.OUT, value=1)
 p3 = Pin(18, mode=Pin.OUT, value=1)
+p4 = Pin(19, mode=Pin.OUT, value=1)
 
 v = 0
 
-t = 0.0102
+t = 0.004
 
 while True:
     p1.value(v)
@@ -15,7 +16,7 @@ while True:
     p2.value(v)
     
     p3.value(v)
-    #p3.value(0)
+    p4.value(v)
     if v == 0:
         v = 1
     else:

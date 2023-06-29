@@ -67,6 +67,8 @@ function onMessageArrived(message) {
             app.state.event_timers_enabled = payload.state.event_timers_enabled;
             app.state.active_event_timer = payload.state.active_event_timer;
             app.state.datetime = payload.datetime;
+            app.state.tempf = payload.tempf;
+            app.state.tempc = payload.tempc;
         } else if (message.destinationName.includes('/event_timers/list')) {
             let payload = JSON.parse(message.payloadString);
             app.state.event_timers = payload;

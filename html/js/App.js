@@ -2,15 +2,18 @@
 import onChange from './lib/onchange.js';
 import EventTimers from './components/EventTimers.js';
 import RelaysList from './components/RelaysList.js';
-import Datetime from './components/Datetime.js';
+import ControllerInfo from './components/ControllerInfo.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
     <style>
+        #app-container {
+            min-width:340px;
+        }
         
     </style>
     <div id="app-container">
-        <div>Controller Time: <date-time></date-time></div>
+        <controller-info></controller-info>
         <relays-list></relays-list>
         <event-timers></event-timers>
     </div>
@@ -31,7 +34,9 @@ export default class App {
                 'mm': '',
                 'ss': '',
                 'dow': ''
-            }
+            },
+            tempf: '',
+            tempc: ''
         }, this.update.bind(this));
         
         this.$el = template.content.cloneNode(true);
@@ -39,7 +44,7 @@ export default class App {
         this.$event_timers = this.$el.querySelector('event-timers');
         this.$app_container = this.$el.querySelector('#app-container');
         
-        this.$datetime = this.$el.querySelector('date-time');
+        this.$controller_info = this.$el.querySelector('controller-info');
 
         // Catch events that bubble up from child components
         
@@ -81,12 +86,15 @@ export default class App {
     }
     
     update(path, current, previous) {
-        this.$relays_list.props.relays = Object.assign({}, this.state.relays); ///////////
-        this.$datetime.props.datetime = this.state.datetime;
+        this.$relays_list.props.relays = Object.assign({}, this.state.relays);
+        this.$controller_info.props.datetime = this.state.datetime;
+        this.$controller_info.props.tempf = this.state.tempf;
+        this.$controller_info.props.tempc = this.state.tempc;
         this.$event_timers.props.event_timers_enabled = this.state.event_timers_enabled;
         this.$event_timers.props.event_timers = this.state.event_timers;
         this.$event_timers.props.event_timer_changed = this.state.event_timer_changed;
         this.$event_timers.props.active_event_timer = this.state.active_event_timer;
+        this.$event_timers.props.relays = this.state.relays;
     }
 }
 

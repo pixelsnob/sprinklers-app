@@ -12,7 +12,7 @@ const template = document.createElement('template');
 template.innerHTML = `
     <form name="event-timer-form">
         <div>
-            <relay-input name="relay_id" relay_count="3"></relay-input>
+            <relay-input name="relay_id"></relay-input>
         </div>
         <div><a id="use-current-datetime">Use current day and time</a></div>
         <div>
@@ -41,6 +41,7 @@ export default class EventTimerForm extends HTMLElement {
         super();
                 
         this.props = onChange({
+            relays: {},
             event_timer: {
                 _id: 0,
                 relay_id: '',
@@ -73,6 +74,8 @@ export default class EventTimerForm extends HTMLElement {
         this.$relay_input = this.shadowRoot.querySelector('relay-input');
         this.$duration_input = this.shadowRoot.querySelector('duration-input');
         
+        this.$relay_input.relay_count = Object.keys(this.props.relays).length;
+         
         this.$use_current_datetime = this.shadowRoot.querySelector('#use-current-datetime');
         this.$use_current_datetime.addEventListener('click', ev => {
             const dt = new Date();
@@ -86,6 +89,9 @@ export default class EventTimerForm extends HTMLElement {
     
     
     update(path, current, previous) {
+        if (path == 'relays' && current) {
+            this.$relay_input.relay_count = Object.keys(current).length;
+        }
         if (this.form_action == 'edit') {
             this.$days_of_week_input.props.dow = this.props.event_timer.dow;
             this.$relay_input.props.relay_id = this.props.event_timer.relay_id;
@@ -93,6 +99,7 @@ export default class EventTimerForm extends HTMLElement {
             this.$minute_input.props.mm = this.props.event_timer.mm;
             this.$duration_input.props.duration = this.props.event_timer.duration;
         }
+        
     }
     
     render() {        

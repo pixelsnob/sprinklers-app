@@ -24,6 +24,7 @@ export default class EventTimers extends HTMLElement {
     constructor() {
         super();
         this.props = onChange({
+            relays: {},
             event_timers_enabled: false,
             active_event_timer: null,
             event_timers: [],
@@ -75,10 +76,10 @@ export default class EventTimers extends HTMLElement {
         $container.innerHTML = '';
         this.$event_timer_form = document.createElement('event-timer-form');
         $container.appendChild(this.$event_timer_form);
+        this.$event_timer_form.props.relays = this.props.relays;
     }
     
     disconnectedCallback() {
-        console.log('disconnected');
         
     }
     
@@ -93,9 +94,17 @@ export default class EventTimers extends HTMLElement {
         this.$button.props.enabled = this.props.event_timers_enabled;
         this.$event_timers_list.props.event_timers = this.props.event_timers.slice();
         this.$event_timers_list.props.active_event_timer = this.props.active_event_timer;
-        this.$event_timers_list.props.event_timers_enabled = this.props.event_timers_enabled;;
-        if (this.$event_timer_form && this.$event_timer_form.parentNode && path == 'event_timer_changed' && current != 'deleted') {
-            this.$event_timer_form.parentNode.removeChild(this.$event_timer_form);
+        this.$event_timers_list.props.event_timers_enabled = this.props.event_timers_enabled;
+        
+        if (this.$event_timer_form && path == 'relays') {
+            this.$event_timer_form.props.relays = current;
+        }
+            
+        if (this.$event_timer_form && this.$event_timer_form.parentNode) {
+            
+            if (path == 'event_timer_changed' && current != 'deleted') {
+                this.$event_timer_form.parentNode.removeChild(this.$event_timer_form);
+            }
         }
     }
     

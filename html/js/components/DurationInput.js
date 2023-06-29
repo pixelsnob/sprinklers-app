@@ -57,12 +57,13 @@ export default class DurationInput extends HTMLElement {
     
     render() {
         this.$select.innerHTML = '<option value="">Select duration...</option>';
-        for (let i = 1; i <= 59; i++) {
+        for (let i = 0.5; i <= 59;) {
             const $option = document.createElement('option');
             $option.value = i;
             $option.innerText = i;
             $option.selected = i === this.props.duration ? true: '';
             this.$select.appendChild($option);
+            i = i < 5 ? i + 0.5 : i + 1;
         }   
     }
     

@@ -71,16 +71,14 @@ export default class DaysOfWeekInput extends HTMLElement {
             
             $container.appendChild($dow_tpl.content.cloneNode(true));
             $container.querySelector('input').addEventListener('change', this.onSelectOne.bind(this));
-            //console.log('$$$$',  $container.querySelector('input'));
-            
         });
         
         this.shadowRoot.querySelectorAll('input[name="days-of-week"]').forEach($el => {
             $el.addEventListener('change', this.onSelectOne.bind(this));
         });
-        console.log(this.props.dow.split(',').map(v => Number(v)).every(v => [ 0, 1, 2, 3, 4, 5, 6 ].includes(v)));
-        const daily_checked = (this.props.dow == '0,1,2,3,4,5,6' ? 'checked="checked"' : '');  
         
+        const daily_checked = this.props.dow.split(',').length === 7 ? 'checked="checked"' : '';  
+
         const $daily_tpl = document.createElement('template');
         $daily_tpl.innerHTML = `
             <div class="input-container">

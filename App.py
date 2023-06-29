@@ -19,58 +19,45 @@ class App:
         
     def __init__(self):
         
-        self.main_config = getConfig()
+        self.config = getConfig()
         
-        self.wifi_led = Pin(21, mode=Pin.OUT, value=1)
-        self.mqtt_led = Pin(20, mode=Pin.OUT, value=1)
-        self.exception_led = Pin(22, mode=Pin.OUT, value=1)
-        self.builtin_led = Pin('LED', Pin.OUT, value=1)
-        self.event_timers_enabled_led = Pin(26, Pin.OUT, value=1)
+        self.wifi_led = Pin(self.config['wifi_led'], mode=Pin.OUT, value=1)
+        self.mqtt_led = Pin(self.config['mqtt_led'], mode=Pin.OUT, value=1)
+        self.exception_led = Pin(self.config['exception_led'], mode=Pin.OUT, value=1)
+        self.event_timers_enabled_led = Pin(self.config['event_timers_enabled_led'], Pin.OUT, value=1)
         
-        sleep(0.5)
+        sleep(1)
         
         self.wifi_led.off()
         self.mqtt_led.off()
         self.exception_led.off()
         self.event_timers_enabled_led.off()
+
+        self.relays = {}
+        self.relays_state = {}
         
-        self.relays =  {
-            '1': Pin(16, mode=Pin.OUT, value=1),
-            '2': Pin(17, mode=Pin.OUT, value=1),
-            '3': Pin(18, mode=Pin.OUT, value=1)
-        }
         
-        self.relays_state = {
-            '1': False,
-            '2': False,
-            '3': False
-        }
+        for r in self.config['relays']:
+            self.relays[r] = Pin(self.config['relays'][r], mode=Pin.OUT, value=1)
+            self.relays_state[r] = False
         
-        self.previous_button_values = {
-            '1': 1,
-            '2': 1,
-            '3': 1
-        }
-                
-        self.buttons = {
-             '1': Pin(9, Pin.IN, Pin.PULL_UP),
-             '2': Pin(4, Pin.IN, Pin.PULL_UP),
-             '3': Pin(8, Pin.IN, Pin.PULL_UP),
-        }
+        self.buttons = {}
+        self.previous_button_values = {}
         
-        #self.off_button = Pin(13, Pin.IN, Pin.PULL_UP)
-        #self.previous_off_button_value = None
+        for b in self.config['buttons']:
+            self.buttons[b] = Pin(self.config['buttons'][b], mode=Pin.OUT, value=1)
+            self.previous_button_values[b] = 1
         
-        self.toggle_timer_button = Pin(12, Pin.IN, Pin.PULL_UP)
+        self.toggle_timer_button = Pin(self.config['toggle_timer_button'], Pin.IN, Pin.PULL_UP)
         
-        self.mqtt_topic = self.main_config['mqtt_topic']
+        self.mqtt_topic = self.config['mqtt_topic']
                 
         self.previous_status = None # naming
         
-        mqtt_async_config['server'] = self.main_config['mqtt_server']
-        mqtt_async_config['client_id'] = self.main_config['client_id']
-        mqtt_async_config['ssid'] = self.main_config['ssid']
-        mqtt_async_config['wifi_pw'] = self.main_config['password']
+        mqtt_async_config['server'] = self.config['mqtt_server']
+        mqtt_async_config['client_id'] = self.config['client_id']
+        mqtt_async_config['ssid'] = self.config['ssid']
+        mqtt_async_config['wifi_pw'] = self.config['password']
         mqtt_async_config['subs_cb'] = lambda a, b, c: self.mqttCallback(a, b, c)
         
         # This is necessary because callback is bound to mqtt client
@@ -85,12 +72,10 @@ class App:
         MQTTClient.DEBUG = True
         
         self.mqtt_client = MQTTClient(mqtt_async_config)
-
-        #self.mqtt_client_is_connected = False
         
         i2c = SoftI2C(
-            scl=Pin(15, Pin.OPEN_DRAIN, value=1),
-            sda=Pin(14, Pin.OPEN_DRAIN, value=1)
+            scl=Pin(self.config['ds3231_i2c_scl'], Pin.OPEN_DRAIN, value=1),
+            sda=Pin(self.config['ds3231_i2c_sda'], Pin.OPEN_DRAIN, value=1)
         )
 
         self.ds3231 = DS3231(i2c)
@@ -117,7 +102,7 @@ class App:
         # The coro receives a single bool arg being the network state.
     
     async def onMqttConnect(self, mclient):
-        await mclient.subscribe(b'%s/#' % self.main_config['mqtt_topic'], 1)
+        await mclient.subscribe(b'%s/#' % self.config['mqtt_topic'], 1)
         await asyncio.sleep_ms(20)
         await mclient.publish(b'%s/online' % self.mqtt_topic, '1', True)
         await asyncio.sleep_ms(20)
@@ -125,7 +110,7 @@ class App:
         await asyncio.sleep_ms(30)
         await self.mqttPublishEventTimers()
         await asyncio.sleep_ms(0)
-        
+    
     async def connectionCheck(self):
         while True:
             if self.mqtt_client.isconnected():
@@ -159,7 +144,7 @@ class App:
         try:
             _topic = topic.decode()
             loop = asyncio.get_event_loop()
-            matches = re.search(r'channel\/([1-3])/toggle', _topic)
+            matches = re.search(r'channel\/([\d])/toggle', _topic)
             message_received = False
             if matches and len(matches.groups()):
                 relay_id = matches.groups()[0]
@@ -304,19 +289,6 @@ class App:
                         await self.toggleRelay(b)
                 self.previous_button_values[b] = button_val
             await asyncio.sleep_ms(20)
-    
-#     async def pollRelayOffButtonState(self):
-#         while True:
-#             button_val = self.off_button.value()
-#             if button_val != self.previous_off_button_value:
-#                 if button_val == 0:
-#                     for r in self.relays:
-#                         if self.relays[r].value() == 0:
-#                             # Turn off if on
-#                             await self.cancelActiveEventTimer()
-#                             await self.toggleRelay(r, 'off')
-#                 self.previous_off_button_value = button_val
-#             await asyncio.sleep_ms(20)
             
     async def eventTimerLed(self):
         while True:

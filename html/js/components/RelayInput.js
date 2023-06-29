@@ -38,7 +38,8 @@ export default class RelayInput extends HTMLElement {
     }
     
     set relay_count(value) {
-       this.setAttribute('relay_count', value); 
+       this.setAttribute('relay_count', value);
+       this.render();
     }
     
     connectedCallback() {

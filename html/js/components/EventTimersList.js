@@ -4,6 +4,9 @@ import onChange from '../lib/onchange.js';
 const template = document.createElement('template');
 template.innerHTML = `
     <style>
+        table {
+            display: table;
+        }
         .active td {
             background: #ddd;
         }

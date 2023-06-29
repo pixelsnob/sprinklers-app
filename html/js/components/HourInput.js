@@ -66,10 +66,8 @@ export default class HourInput extends HTMLElement {
     validate() {
         if (this._value === '') {
             this._internals.setValidity({ valueMissing: true }, 'Select the hour', this.$select);
-            console.log('invalid')
         } else {
             this._internals.setValidity({});
-            console.log('valid')
         }
     }
     

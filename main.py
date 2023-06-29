@@ -10,7 +10,7 @@ import json
 from time import sleep
 
 logging.basicConfig(filename='./log/errors.log', format='%(asctime)s %(message)s', level=logging.DEBUG)
-exception_led = Pin(22, mode=Pin.OUT, value=1)
+exception_led = Pin(21, mode=Pin.OUT, value=1) # change this
 log = logging.getLogger()
 
 def set_global_exception(app):
@@ -18,8 +18,8 @@ def set_global_exception(app):
         exception_led.on()
         sys.print_exception(context['exception'])
         print(context)
-        log.critical('Exception! ' + json.dumps(context['exception'])) # log traceback
-        #sleep(2)
+        log.critical('Exception! ' + json.dumps(context)) # log traceback
+        sleep(0.5)
         #sys.exit()
     loop = asyncio.get_event_loop()
     loop.set_exception_handler(handle_exception) # move all of this down
