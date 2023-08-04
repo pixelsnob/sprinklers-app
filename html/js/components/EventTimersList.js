@@ -36,6 +36,16 @@ const DAYS_OF_WEEK = [
     'Sunday'
 ];
 
+const SHORT_DAYS_OF_WEEK = [
+    'Mon',
+    'Tues',
+    'Weds',
+    'Thurs',
+    'Fri',
+    'Sat',
+    'Sun'
+];
+
 export default class EventTimersList extends HTMLElement {
 
     constructor() {
@@ -102,7 +112,7 @@ export default class EventTimersList extends HTMLElement {
             });
             tpl.innerHTML = `
                 <td>${event_timer.relay_id}</td>
-                <td>${event_timer.dow.split(',').map(d => DAYS_OF_WEEK[d]).join(', ')}</td>
+                <td>${event_timer.dow.split(',').map(d => SHORT_DAYS_OF_WEEK[d]).join('&nbsp;')}</td>
                 <td>${datetime_am_pm}</td>
                 <td>${event_timer.duration}</td>
                 <td><a class="edit">Edit</a></td>

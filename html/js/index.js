@@ -51,13 +51,13 @@ function onConnect() {
 
 function onConnectionLost(responseObject) {
     if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:" + responseObject.errorMessage);
+        //console.log("onConnectionLost:" + responseObject.errorMessage);
         connected = false;
     }
 }
 
 function onMessageArrived(message) {
-    console.log(message.destinationName, message.payloadString);
+    //console.log(message.destinationName, message.payloadString);
     try {
         if (message.destinationName.includes('/status')) {
             let payload = JSON.parse(message.payloadString);

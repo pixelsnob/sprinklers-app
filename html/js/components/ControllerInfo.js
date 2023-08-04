@@ -50,7 +50,7 @@ export default class ControllerInfo extends HTMLElement {
     render() {
         const dt = new Date(
             this.props.datetime.YY,
-            this.props.datetime.MM,
+            this.props.datetime.MM - 1,
             this.props.datetime.dd,
             this.props.datetime.hh,
             this.props.datetime.mm
