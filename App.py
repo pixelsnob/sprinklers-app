@@ -23,14 +23,14 @@ class App:
         
         self.wifi_led = Pin(self.config['wifi_led'], mode=Pin.OUT, value=1)
         self.mqtt_led = Pin(self.config['mqtt_led'], mode=Pin.OUT, value=1)
-        self.exception_led = Pin(self.config['exception_led'], mode=Pin.OUT, value=1)
+        self.power_led = Pin(self.config['power_led'], mode=Pin.OUT, value=1)
+        #self.exception_led = Pin(self.config['exception_led'], mode=Pin.OUT, value=1)
         self.event_timers_enabled_led = Pin(self.config['event_timers_enabled_led'], Pin.OUT, value=1)
         
         sleep(1)
         
         self.wifi_led.off()
         self.mqtt_led.off()
-        self.exception_led.off()
         self.event_timers_enabled_led.off()
 
         self.relays = {}
@@ -39,13 +39,14 @@ class App:
         
         for r in self.config['relays']:
             self.relays[r] = Pin(self.config['relays'][r], mode=Pin.OUT, value=1)
+            self.relays[r].value(1)
             self.relays_state[r] = False
         
         self.buttons = {}
         self.previous_button_values = {}
         
         for b in self.config['buttons']:
-            self.buttons[b] = Pin(self.config['buttons'][b], mode=Pin.OUT, value=1)
+            self.buttons[b] = Pin(self.config['buttons'][b], Pin.IN, Pin.PULL_UP)
             self.previous_button_values[b] = 1
         
         self.toggle_timer_button = Pin(self.config['toggle_timer_button'], Pin.IN, Pin.PULL_UP)
@@ -144,7 +145,7 @@ class App:
         try:
             _topic = topic.decode()
             loop = asyncio.get_event_loop()
-            matches = re.search(r'channel\/([\d])/toggle', _topic)
+            matches = re.search(r'channel\/([1-' + str(len(self.config['relays'])) + '])/toggle', _topic)
             message_received = False
             if matches and len(matches.groups()):
                 relay_id = matches.groups()[0]
@@ -446,7 +447,7 @@ class App:
             self.relays[r].value(1)
         self.wifi_led.off()
         self.mqtt_led.off()
-        #self.exception_led.off()
+        self.power_led.off()
         self.event_timers_enabled_led.off()
         
 
